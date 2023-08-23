@@ -13,13 +13,16 @@ module Node.Express.Request
 
 import Prelude
 
-import Data.Function.Uncurried (Fn2, Fn3, Fn4, runFn2, runFn3, runFn4)
 import Data.Maybe (Maybe(..), maybe)
+
 import Effect (Effect)
 import Effect.Class (liftEffect)
+import Effect.Uncurried (EffectFn2, EffectFn3, EffectFn4, runEffectFn2, runEffectFn3, runEffectFn4)
+
 import Foreign (F, Foreign)
 import Foreign.Object (Object)
 import Foreign.Class (class Decode, decode)
+
 import Node.Express.Handler (Handler, HandlerM(..))
 import Node.Express.Types (class RequestParam, Request, Method, Protocol, decodeProtocol, decodeMethod)
 
@@ -30,7 +33,7 @@ import Node.Express.Types (class RequestParam, Request, Method, Protocol, decode
 -- | route.
 getRouteParam :: forall a. RequestParam a => a -> HandlerM (Maybe String)
 getRouteParam name = HandlerM \req _ _ ->
-    liftEffect $ runFn4 _getRouteParam req name Nothing Just
+    liftEffect $ runEffectFn4 _getRouteParam req name Nothing Just
 
 -- | Get all route params.
 getRouteParams :: HandlerM (Object Foreign)
@@ -56,7 +59,7 @@ getBody' = HandlerM \req _ _ ->
 -- |       See http://expressjs.com/4x/api.html#req.body
 getBodyParam :: forall a. String -> HandlerM (Maybe a)
 getBodyParam name = HandlerM \req _ _ ->
-    liftEffect $ runFn4 _getBodyParam req name Nothing Just
+    liftEffect $ runEffectFn4 _getBodyParam req name Nothing Just
 
 -- | Get param from query string (part of URL behind '?').
 -- | It could be any JS object, e.g. an array in case multiple repeating query
@@ -66,7 +69,7 @@ getBodyParam name = HandlerM \req _ _ ->
 -- | https://github.com/expressjs/express/blob/master/test/req.query.js)
 getQueryParam :: forall a. String -> HandlerM (Maybe a)
 getQueryParam name = HandlerM \req _ _ -> do
-    liftEffect $ runFn4 _getQueryParam req name Nothing Just
+    liftEffect $ runEffectFn4 _getQueryParam req name Nothing Just
 
 -- | Shortcut for `getQueryParam paramName :: HandlerM (Maybe (Array a))`
 getQueryParams :: forall a. String -> HandlerM (Maybe (Array a))
@@ -80,17 +83,17 @@ getRoute = HandlerM \req _ _ ->
 -- | Get cookie param by its key.
 getCookie :: String -> HandlerM (Maybe String)
 getCookie name = HandlerM \req _ _ ->
-    liftEffect $ runFn4 _getCookie req name Nothing Just
+    liftEffect $ runEffectFn4 _getCookie req name Nothing Just
 
 -- | Get signed cookie param by its key.
 getSignedCookie :: String -> HandlerM (Maybe String)
 getSignedCookie name = HandlerM \req _ _ ->
-    liftEffect $ runFn4 _getSignedCookie req name Nothing Just
+    liftEffect $ runEffectFn4 _getSignedCookie req name Nothing Just
 
 -- | Get request header param.
 getRequestHeader :: String -> HandlerM (Maybe String)
 getRequestHeader field = HandlerM \req _ _ ->
-    liftEffect $ runFn4 _getHeader req field Nothing Just
+    liftEffect $ runEffectFn4 _getHeader req field Nothing Just
 
 -- | Get all request headers.
 getRequestHeaders :: HandlerM (Object Foreign)
@@ -99,7 +102,7 @@ getRequestHeaders = HandlerM \req _ _ -> liftEffect $ _getHeaders req
 -- | Check if specified response type will be accepted by a client.
 accepts :: String -> HandlerM (Maybe String)
 accepts types = HandlerM \req _ _ ->
-    liftEffect $ runFn4 _accepts req types Nothing Just
+    liftEffect $ runEffectFn4 _accepts req types Nothing Just
 
 -- | Execute specified handler if client accepts specified response type.
 ifAccepts :: String -> Handler -> Handler
@@ -110,18 +113,18 @@ ifAccepts type_ act = do
 -- | Check if specified charset is accepted.
 acceptsCharset :: String -> HandlerM (Maybe String)
 acceptsCharset charset = HandlerM \req _ _ ->
-    liftEffect $ runFn4 _acceptsCharset req charset Nothing Just
+    liftEffect $ runEffectFn4 _acceptsCharset req charset Nothing Just
 
 -- | Check if specified language is accepted.
 acceptsLanguage :: String -> HandlerM (Maybe String)
 acceptsLanguage language = HandlerM \req _ _ ->
-    liftEffect $ runFn4 _acceptsLanguage req language Nothing Just
+    liftEffect $ runEffectFn4 _acceptsLanguage req language Nothing Just
 
 -- | Check if request's Content-Type field matches type.
 -- | See http://expressjs.com/4x/api.html#req.is
 hasType :: String -> HandlerM Boolean
 hasType type_ = HandlerM \req _ _ ->
-    liftEffect $ runFn2 _hasType req type_
+    liftEffect $ runEffectFn2 _hasType req type_
 
 -- | Return remote or upstream address.
 getRemoteIp :: HandlerM String
@@ -187,14 +190,14 @@ getOriginalUrl = HandlerM \req _ _ ->
 -- | object to specified data
 setUserData :: forall a. String -> a -> Handler
 setUserData field val = HandlerM \req _ _ ->
-    liftEffect $ runFn3 _setData req field val
+    liftEffect $ runEffectFn3 _setData req field val
 
 -- | Retrieves the data from the request set with previous call to `setUserData`
 getUserData :: forall a. String -> HandlerM (Maybe a)
 getUserData field = HandlerM \req _ _ -> do
-    liftEffect $ runFn4 _getData req field Nothing Just
+    liftEffect $ runEffectFn4 _getData req field Nothing Just
 
-foreign import _getRouteParam :: forall a. Fn4 Request a (Maybe String) (String -> Maybe String) (Effect (Maybe String))
+foreign import _getRouteParam :: forall a. EffectFn4 Request a (Maybe String) (String -> Maybe String) (Maybe String)
 
 foreign import _getRouteParams :: Request -> Effect (Object Foreign)
 
@@ -202,25 +205,25 @@ foreign import _getRoute :: Request -> Effect String
 
 foreign import _getBody :: Request -> Effect Foreign
 
-foreign import _getBodyParam :: forall a. Fn4 Request String (Maybe a) (a -> Maybe a) (Effect (Maybe a))
+foreign import _getBodyParam :: forall a. EffectFn4 Request String (Maybe a) (a -> Maybe a) (Maybe a)
 
-foreign import _getQueryParam :: forall a. Fn4 Request String (Maybe a) (a -> Maybe a) (Effect (Maybe a))
+foreign import _getQueryParam :: forall a. EffectFn4 Request String (Maybe a) (a -> Maybe a) (Maybe a)
 
-foreign import _getCookie :: Fn4 Request String (Maybe String) (String -> Maybe String) (Effect (Maybe String))
+foreign import _getCookie :: EffectFn4 Request String (Maybe String) (String -> Maybe String) (Maybe String)
 
-foreign import _getSignedCookie :: Fn4 Request String (Maybe String) (String -> Maybe String) (Effect (Maybe String))
+foreign import _getSignedCookie :: EffectFn4 Request String (Maybe String) (String -> Maybe String) (Maybe String)
 
-foreign import _getHeader :: Fn4 Request String (Maybe String) (String -> Maybe String) (Effect (Maybe String))
+foreign import _getHeader :: EffectFn4 Request String (Maybe String) (String -> Maybe String) (Maybe String)
 
 foreign import _getHeaders :: Request -> Effect (Object Foreign)
 
-foreign import _accepts :: Fn4 Request String (Maybe String) (String -> Maybe String) (Effect (Maybe String))
+foreign import _accepts :: EffectFn4 Request String (Maybe String) (String -> Maybe String) (Maybe String)
 
-foreign import _acceptsCharset :: Fn4 Request String (Maybe String) (String -> Maybe String) (Effect (Maybe String))
+foreign import _acceptsCharset :: EffectFn4 Request String (Maybe String) (String -> Maybe String) (Maybe String)
 
-foreign import _acceptsLanguage :: Fn4 Request String (Maybe String) (String -> Maybe String) (Effect (Maybe String))
+foreign import _acceptsLanguage :: EffectFn4 Request String (Maybe String) (String -> Maybe String) (Maybe String)
 
-foreign import _hasType :: Fn2 Request String (Effect Boolean)
+foreign import _hasType :: EffectFn2 Request String Boolean
 
 foreign import _getRemoteIp :: Request -> Effect String
 
@@ -246,6 +249,6 @@ foreign import _getUrl :: Request -> Effect String
 
 foreign import _getOriginalUrl :: Request -> Effect String
 
-foreign import _setData :: forall a. Fn3 Request String a (Effect Unit)
+foreign import _setData :: forall a. EffectFn3 Request String a Unit
 
-foreign import _getData :: forall a. Fn4 Request String (Maybe a) (a -> Maybe a) (Effect (Maybe a))
+foreign import _getData :: forall a. EffectFn4 Request String (Maybe a) (a -> Maybe a) (Maybe a)

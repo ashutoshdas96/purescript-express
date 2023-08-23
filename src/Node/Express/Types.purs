@@ -51,10 +51,12 @@ type Port = Int
 type Pipe = String
 type Path = String
 
+class RoutePattern :: forall k. k -> Constraint
 class RoutePattern a
 instance routePath  :: RoutePattern String
 instance routeRegex :: RoutePattern Regex
 
+class RequestParam :: forall k. k -> Constraint
 class RequestParam a
 instance requestParamString :: RequestParam String
 instance requestParamNumber :: RequestParam Number

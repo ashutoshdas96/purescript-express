@@ -1,10 +1,8 @@
 export function _getRouteParam(req, name, nothing, just) {
-    return function () {
-        if (req.params[name] != null) {
-            return just(req.params[name]);
-        }
-        return nothing;
-    };
+    if (req.params[name] != null) {
+        return just(req.params[name]);
+    }
+    return nothing;
 };
 
 export function _getRouteParams(req) {
@@ -26,48 +24,38 @@ export function _getBody(req) {
 };
 
 export function _getBodyParam(req, name, nothing, just) {
-    return function () {
-        if (req.body && name in req.body && req.body[name] != null) {
-            return just(req.body[name]);
-        }
-        return nothing;
-    };
+    if (req.body && name in req.body && req.body[name] != null) {
+        return just(req.body[name]);
+    }
+    return nothing;
 };
 
 export function _getQueryParam(req, name, nothing, just) {
-    return function () {
-        if (req.query && name in req.query && req.query[name] != null) {
-            return just(req.query[name]);
-        }
-        return nothing;
-    };
+    if (req.query && name in req.query && req.query[name] != null) {
+        return just(req.query[name]);
+    }
+    return nothing;
 };
 
 export function _getCookie(req, name, nothing, just) {
-    return function () {
-        if (req.cookies[name] != null) {
-            return just(req.cookies[name]);
-        }
-        return nothing;
+    if (req.cookies[name] != null) {
+        return just(req.cookies[name]);
     }
+    return nothing;
 };
 
 export function _getSignedCookie(req, name, nothing, just) {
-    return function () {
-        if (req.signedCookies[name] != null) {
-            return just(req.signedCookies[name]);
-        }
-        return nothing;
-    };
+    if (req.signedCookies[name] != null) {
+        return just(req.signedCookies[name]);
+    }
+    return nothing;
 };
 
 export function _getHeader(req, field, nothing, just) {
-    return function () {
-        if (req.get(field) != null) {
-            return just(req.get(field));
-        }
-        return nothing;
-    };
+    if (req.get(field) != null) {
+        return just(req.get(field));
+    }
+    return nothing;
 };
 
 export function _getHeaders(req) {
@@ -77,36 +65,28 @@ export function _getHeaders(req) {
 };
 
 export function _accepts(req, types, nothing, just) {
-    return function () {
-        if (req.accepts(types) != null) {
-            return just(req.accepts(types));
-        }
-        return nothing;
-    };
+    if (req.accepts(types) != null) {
+        return just(req.accepts(types));
+    }
+    return nothing;
 };
 
 export function _acceptsCharset(req, charset, nothing, just) {
-    return function () {
-        if (req.acceptsCharset(charset) != null) {
-            return just(req.acceptsCharset(charset));
-        }
-        return nothing;
-    };
+    if (req.acceptsCharset(charset) != null) {
+        return just(req.acceptsCharset(charset));
+    }
+    return nothing;
 };
 
 export function _acceptsLanguage(req, language, nothing, just) {
-    return function () {
-        if (req.acceptsLanguage(language) != null) {
-            return just(req.acceptsLanguage(language));
-        }
-        return nothing;
-    };
+    if (req.acceptsLanguage(language) != null) {
+        return just(req.acceptsLanguage(language));
+    }
+    return nothing;
 };
 
 export function _hasType(req, type) {
-    return function () {
-        return req.is(type);
-    };
+    return req.is(type);
 };
 
 export function _getRemoteIp(req) {
@@ -182,12 +162,10 @@ export function _getOriginalUrl(req) {
 };
 
 export function _getData(req, field, nothing, just) {
-    return function () {
-        if (req.userData && req.userData[field] != null) {
-            return just(req.userData[field]);
-        }
-        return nothing;
-    };
+    if (req.userData && req.userData[field] != null) {
+        return just(req.userData[field]);
+    }
+    return nothing;
 };
 
 export function _setData(req, field, val) {

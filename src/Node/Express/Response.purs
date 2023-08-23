@@ -7,6 +7,7 @@ module Node.Express.Response
     , sendFile, sendFileExt, download, downloadExt
     , render
     , end
+    , setAttachment
     ) where
 
 import Prelude
